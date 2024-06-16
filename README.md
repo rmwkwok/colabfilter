@@ -45,7 +45,7 @@ For more details, refer to the Jupyter Notebook in `./demo`.
 
 ### Some training curves
 
-The 1MB MovieLens "ml-latest-small" dataset is used for this demo.
+The small MovieLens dataset "ml-latest-small" with ~100,000 ratings is used for this demo.
 
 ![](./demo/img/training_curves.png)
 
