@@ -1,0 +1,17 @@
+# compiled
+__pycache__/
+
+# Jupyter
+.ipynb_checkpoints
+
+# packaging and C extensions
+build/
+*.c
+*.so
+
+# virtual environment
+venv/
+
+# data
+data_full/
+data_small/
