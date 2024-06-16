@@ -87,7 +87,7 @@ class PipeLine:
             default_num_procs: int = 1,
             default_tqdm_kwargs: dict | None = None,
             logger: _t.Logger | None = None,
-            ) -> None:
+        ) -> None:
         self.source = source
         self.pipeline = []
         self.default_num_procs = default_num_procs or 1
@@ -113,7 +113,7 @@ class PipeLine:
                 chain_if: bool = True,
                 doc: str = '',
                 **kwargs: _t.Any,
-                ) -> _t.Self:
+            ) -> _t.Self:
             # doc is reserved.
             if chain_if:
                 self.pipeline.append(method(self, *args, **kwargs))
