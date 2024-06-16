@@ -19,7 +19,7 @@ A demo of collaborative filtering based on -
     1. Latent factors
     2. Implicit feedback
     3. Neighbourhood
-    4. SIAM algorithm
+    4. SLIM algorithm
 
 ### Data
 
@@ -49,7 +49,7 @@ The small MovieLens dataset "ml-latest-small" with ~100,000 ratings is used for 
 
 ![](./demo/img/training_curves.png)
 
-For searched parameters details, refer to the Jupyter Notebook in `./demo`.
+For details about the searched parameters, refer to the Jupyter Notebook in `./demo`.
 
 ## Tested environment
 
@@ -89,7 +89,7 @@ python setup.py build_ext --inplace
 6. Open the Jupyter Notebook in `./demo` with Jupyter-lab or Jupyter-notebook
 
 ## Uninstall
-7. Verify that the kernel (named "colabfilter-venv") added in step 4 is there
+7. Verify that the kernel (named "colabfilter-venv") added in the step 4 is there
 ```
 jupyter kernelspec list
 ```
@@ -99,7 +99,7 @@ jupyter kernelspec list
 jupyter kernelspec uninstall colabfilter-venv
 ```
 
-9. Delete the folder contraining the virtual environment (if created) and the cloned repository.
+9. Delete the folder containing the virtual environment (if created) and the cloned repository.
 
 
 [contributors-shield]: https://img.shields.io/github/contributors/rmwkwok/colabfilter.svg?style=for-the-badge

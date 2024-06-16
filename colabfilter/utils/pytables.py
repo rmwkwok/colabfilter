@@ -63,8 +63,8 @@ class Tables:
 class PathsToPyTablesConverter:
     '''Decorate a function so that when the function is called, it
     converts the function's path arguments to PyTables storage objects
-    (StoreMode.R or StoreMode.A) or functions that can create storages
-    (StoreMode.W).
+    (StoreMode.R or StoreMode.A) or to functions that can create
+    storages (StoreMode.W).
 
     Examples:
     ```
@@ -83,13 +83,21 @@ class PathsToPyTablesConverter:
         ) -> None:
             pass
 
-        func(source='/path/to/source', target='/path/to/target')
+        func(
+            # this is always required as a position-only argument
+            '/path/to/pytable_file.h5',
+            # since `source` is annotated with None, it must be provided
+            source='/path/to/source',
+            target='/path/to/target',
+            # dummy can be skipped as it is annotated with None and None
+            # is the default value
+        )
     ```
 
-    This decorator will copy, to the decorated function, the DocString
-    and the Signature of `func` but replace the relevant annotations
-    (`source`, `target` and `dummy`) to `str` as they are expected to be
-    paths that will be converted into PyTables objects.
+    This decorator will update the DocString of the decorated function
+    to reflect the requirement of the path to the pytables file and
+    change the annotations to str for all path arguments enlisted in
+    @PathsToPyTablesConverter.
 
     Args:
         **kwargs: Tuple[StoreMode, StoreType]

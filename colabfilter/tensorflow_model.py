@@ -109,7 +109,7 @@ class CFModel:
     '''Colaborative Filtering Model.
 
     It accepts a `CFModelParams` instance as its only input argument.
-    It is an experiment to separate this class's argument out as a
+    It is an experiment to separate this class's arguments out as a
     dataclass.
 
     A prediction may be made by calling an instance of this class with
@@ -351,8 +351,8 @@ class CFModel:
             r += C * (term_1 - term_2)
 
         if p.option_3:
-            j = batch['siam_indices']
-            R = batch['siam_ratings']
+            j = batch['slim_indices']
+            R = batch['slim_ratings']
             S2 = _tf.gather(v.S2, batch['item'])
             S2 = _non_neg(S2)
             S1 = _non_neg(v.S1)

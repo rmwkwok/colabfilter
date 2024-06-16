@@ -19,23 +19,24 @@ _EnvConfigSpec = _t.ParamSpec('_EnvConfig')
 
 @_dataclasses.dataclass
 class _EnvConfig:
-    '''Env Configurations.
+    '''Environment Configurations.
 
     Args:
         path_data_folder
-            Path to a folder that will save generated data files.
+            Path to the folder that will save generated data files.
         path_raw_dataset
-            Path to the folder that contains the CSV files.
+            Path to the folder that contains the raw dataset CSV files.
         expected_rows
-            A dict of {csv_file: number_of_rows, ...}.
+            A dict of {csv_file: number_of_rows, ...} for the expected
+            number of rows in each CSV file.
         chunk_size
-            Determine how much data is read each time by data processing
-            and analytics functions
+            Determine, when applicable, how much data is read/write each
+            time by data processing functions.
         num_processes
-            For running data processing concurrently
+            When applicable, for running data processing concurrently
         pbar_show, pbar_leave
             Whether to show the progress bar and, if shown, whether to
-            leave the bar on screen on complete
+            leave the bar on screen upon complete
         default_int, default_float
             Default datatype to be used by data processing functions
         seed
@@ -65,7 +66,8 @@ class _EnvConfig:
         return _os.path.join(self.path_data_folder, 'tfrecords')
 
     def preset(self, *, small_or_full: str, clear_files: bool) -> _t.Self:
-        '''Set `small_or_full` to either "small" or "full".
+        '''Set `small_or_full` to either "small" (for the
+        ml-latest-small dataset) or "full" (for the ml-25m dataset).
         Set `clear_files` to True or False for whether to delete the
         PyTables and TFRecord files.
         '''

@@ -80,7 +80,7 @@ class _Neighbourhood(_TFFeaturesBase):
 
 
 @ _dataclasses.dataclass
-class _Siam(_TFFeaturesBase):
+class _Slim(_TFFeaturesBase):
     indices: _t.IntegralArray
     ratings: _t.FloatingArray
 
@@ -95,7 +95,7 @@ class _TFRecordFeatures(_TFFeaturesBase):
     nbhd_hard_genre: _Neighbourhood
     nbhd_soft_rating: _Neighbourhood
     nbhd_hard_rating: _Neighbourhood
-    siam: _Siam
+    slim: _Slim
 
 
 def _get_tfrecord_features(anno: type):
@@ -202,9 +202,9 @@ def create_tfrecords(
             nbhd_soft_rating_ratings: 1d array, float
             nbhd_soft_rating_scaling: float
 
-        SIAM, naming format: siam_{attribute}
-            siam_indices: 1d array, int
-            siam_ratings: 1d array, float
+        SLIM, naming format: slim_{attribute}
+            slim_indices: 1d array, int
+            slim_ratings: 1d array, float
 
     Each of these elements corresponds to a model variable (shown in
     the accompanied Jupyter Notebook).
@@ -228,11 +228,10 @@ def create_tfrecords(
             Generated files are in
             f'{config.path_tfrecords}/{file_prefix}*.tfrecords',
             where * is replaced by a zero-based file ID up to a value
-            provided in number_of_files. Existing files only with names
-            to be written to will be removed.
+            provided in number_of_files. Existing files will be removed.
         number_of_files: >=1
             The number of TFRecords files to generate. Provide another
-            degree of shuffling of streamed data.
+            degree of shuffling of the streamed data.
     '''
     # Helpers
     rng = _np.random.default_rng(_config.default_seed)
@@ -256,7 +255,7 @@ def create_tfrecords(
             u := row['userId'],
             i := row['movieId'],
             _ := row['rating'],
-            siam=_Siam(
+            slim=_Slim(
                 (x := _drop_item(i, src_fdbk_rating[u]))[:, 0].astype(int),
                 (x[:, 1]),
             ),

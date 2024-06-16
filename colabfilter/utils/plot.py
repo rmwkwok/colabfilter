@@ -50,8 +50,8 @@ def plt_pivot_table(
     '''Plot a pivot table of curves. This function is called as a
     context manager, and on exit, it will call matplotlib.pyplot.show().
 
-    This is experimental. For example, only some cases where all text
-    (including suptitle) are single-lined.
+    This is experimental. For example, it has only been tested with
+    cases where all text (including suptitle) are single-lined.
 
     Args:
         df
@@ -60,9 +60,9 @@ def plt_pivot_table(
         subplot_size_in_pixel
             Width and height in pixels for each cell. Unlike usually
             specifying the size of the whole figure, this function
-            requires the size of one cell (i.e. one subplot), then based
-            on which, font type and font size, calculates the figure
-            size.
+            requires the size of one cell (i.e. one subplot) in pixels,
+            then based on which, font type and font size, calculates the
+            figure size.
         suptitle_text, suptitle_font_size
         rc_params
             This function, after called and before exit, is under the

@@ -48,14 +48,14 @@ def load_csv_to_table(
     '''Load a CSV file to a PyTables Table.
 
     Chunks (`config.chunk_size) of rows from the CSV file at `csv_path`
-    are read, and applied with the `preprocess_tasks`, before getting
-    train-test split randomly (`config.default_seed`) if
-    a path is provided in `target_test_table`.
+    are read, and on whcih the `preprocess_tasks` are applied. If a path
+    is provided in `target_test_table`, it signals to train-test split
+    the data randomly (with `config.default_seed`).
 
     The ratio of test samples is controlled by `test_split_size`, which,
     for example, if set to `0.2`, one out of the 1 / 0.2 = 5 possible
     slices may be used as test. `test_split_id` chooses which one to
-    use and thus enable the creation of k-fold train/test sets.
+    use and thus enables the creation of k-fold train/test sets.
 
     The train (and test) samples are then stored in a Table created at
     the path in `target_table` (and `target_test_table`) following the
@@ -71,6 +71,7 @@ def load_csv_to_table(
             Contains the unique values of each indexed column.
     '''
     # Create _utils.Tables
+    # TODO: check if `v` is already a Col subclass
     create_table_kwargs['description'] = {
         k: _utils.get_tables_object(v)()
         for k, v in create_table_kwargs['description'].items()
@@ -336,11 +337,11 @@ def corr_from_interaction(
     K-th largest correlation value for each item.
 
     Item may be movie, and support may be user or genre.
-    If user, and user-item ratings are provided, two items' correlation
-    is calculated with their common users' ratings. If genre, since it
-    is a binary relation with movie, 0 and 1 are automatically generated
-    to take the place of ratings in the calculation of two items'
-    correlation.
+    If the support is user, and user-item ratings are provided,
+    correlation is calculated with their common users' ratings. If the
+    support is genre, since it is a binary relation with movie, 0 and 1
+    are automatically generated to take the place of ratings in the
+    calculation of two items' correlation.
 
     It uses a pair of interactions (source_item_supp, source_supp_item)
     created with `interaction_from_table()`. The first one takes item
@@ -374,7 +375,7 @@ def corr_from_interaction(
         source_item_supp: floating, (Ni, )
         source_supp_item: floating, (Ns, )
         target_corr_array: floating, (Ni, Ni)
-            Paths to a pair of interaction and the correlation arrays.
+            Paths to a pair of interactions and the correlation arrays.
         target_k_th_corr_array: floating, (Ni, )
             Stores the K-th largest correlation value for each item.
             The value of `K_th` will also be stored.
@@ -520,7 +521,7 @@ def neighbours(
     Neighbours are items that are close to the item in the support-item
     pair. To explain in context, consider the case that (1) supports are
     users, (2) the user-item relation is by ratings, and (3) closeness
-    is measured by the correlations of items:
+    is measured by the correlation of items:
 
         Soft: Among items rated by the user, get the K closest items
         Hard: Among the K closest items, get those rated by the user
@@ -550,11 +551,11 @@ def neighbours(
         target_soft_array
             Path. The content will be floating, (Ns, Ni, K, 2). The
             last axis's shape is 2 because each k (out of K) has two
-            element - the k-th neighbour's item ID and the user's
+            elements - the k-th neighbour's item ID and the user's
             rating to the k-th neighbour.
         target_hard_array
             Path. The content will be integral, (Ns, Ni). For each
-            support-item part, it has a length value to indicate the
+            support-item part, it has a value N to indicate the
             first N soft neighbours are the hard neighbours.
 
     Returns:

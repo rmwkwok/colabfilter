@@ -38,11 +38,11 @@ class ResultsRecorder:
 
     The header's and the first record's column widths are adjusted to
     each other, and the column widths of records can be controlled by
-    field_fmts. It is therefore good to use the format-specs to set the
+    field_fmts. It is therefore good to use the field_fmts to set the
     widths of each column to at least the column header's width. In the
     above example, params_id is 9-character long, so its format-spec is
     ' 9d'. If set to ' 2d' instead, subsequent records' widths will
-    not be matched.
+    not be matched with the header row's.
 
     Args:
         field_fmts
