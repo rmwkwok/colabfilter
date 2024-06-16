@@ -354,7 +354,9 @@ class CFModel:
             j = batch['siam_indices']
             R = batch['siam_ratings']
             S2 = _tf.gather(v.S2, batch['item'])
-            S1R = _tf.nn.embedding_lookup_sparse(v.S1, j, R, combiner='sum')
+            S2 = _non_neg(S2)
+            S1 = _non_neg(v.S1)
+            S1R = _tf.nn.embedding_lookup_sparse(S1, j, R, combiner='sum')
             S1R = _pad_rows(S1R, batch_size, ndim=2)
             r += _tf.reduce_sum(S2 * S1R, axis=1)
 
@@ -382,6 +384,10 @@ def _pad_rows(tensor: _t.TFTensor, batch_size: int, ndim: int) -> _t.TFTensor:
     else:
         raise NotImplementedError
     return _tf.cond(diff > 0, true_fn, lambda: tensor)
+
+
+def _non_neg(tensor: _t.TFTensor) -> _t.TFTensor:
+    return tensor * _tf.cast(_tf.greater_equal(tensor, 0.), dtype=tensor.dtype)
 
 
 def free_tensorflow_resources() -> None:
