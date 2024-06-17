@@ -99,7 +99,12 @@ jupyter kernelspec list
 jupyter kernelspec uninstall colabfilter-venv
 ```
 
-9. Delete the folder containing the virtual environment (if created) and the cloned repository.
+9. Deactivate the virtual environment
+```
+deactivate
+```
+
+10. Delete the folder containing the virtual environment, and delete the cloned repository.
 
 
 [contributors-shield]: https://img.shields.io/github/contributors/rmwkwok/colabfilter.svg?style=for-the-badge
