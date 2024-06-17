@@ -46,6 +46,7 @@ def plt_pivot_table(
         suptitle_text: str | None = None,
         suptitle_font_size: float | None = None,
         rc_params: _t.Dict[str, _t.Any] | None = None,
+        facecolor: _t.FloatingArray | None = None,
     ) -> _t.Generator:
     '''Plot a pivot table of curves. This function is called as a
     context manager, and on exit, it will call matplotlib.pyplot.show().
@@ -69,6 +70,10 @@ def plt_pivot_table(
             context matplotlib.pyplot.rc_context(rc_params) that allows
             temporary change of rcParams, such as font.size. See [1]
             for more on rcParams.
+        facecolor
+            An array of RGBA color values that will be used circularly
+            to color the headers and indices. If None, use
+            `plt.get_cmap('tab20c')([11, 10])` as default.
 
     Returns:
         fig
@@ -161,18 +166,29 @@ def plt_pivot_table(
         shape_header = (df.columns.nlevels + 1, num_cols)
         shape_corner = (df.columns.nlevels + 1, df.index.nlevels)
 
+        if facecolor is None:
+            facecolor = _plt.get_cmap('tab20c')([11, 10])
+
         index_header_corner = [
-            (fig_index, index, shape_index, index_corner_ratio),
-            (fig_header, header, shape_header, None),
-            (fig_corner, corner, shape_corner, index_corner_ratio),
+            (fig_index, index, shape_index, index_corner_ratio, True),
+            (fig_header, header, shape_header, None, True),
+            (fig_corner, corner, shape_corner, index_corner_ratio, False),
         ]
-        for _fig, _texts, _shape, _ratios in index_header_corner:
+        for _fig, _texts, _shape, _ratios, _color in index_header_corner:
             _spec = _fig.add_gridspec(*_shape, width_ratios=_ratios, **spec_kw)
-            for _, _, span, text in _texts:
+            for i, (_, _, span, text) in enumerate(_texts):
                 ax = _fig.add_subplot(_spec[span])
                 ax.text(0, 0.5, str(text),
                         transform=ax.transAxes, ha='left', va='center')
                 ax.axis('off')
+                if _color:
+                    # As axis is turned off, need to add a new patch for bkg.
+                    ax.add_patch(_plt.Rectangle(
+                        (0,0), 1, 1,
+                        facecolor=facecolor[int(i % len(facecolor))],
+                        transform=ax.transAxes,
+                        zorder=-1
+                    ))
 
         def get_subplots_func(**kwargs) -> _t.Iterable[_t.MPLAxes]:
             '''Call this to make matplotlib.axes.Axes objects for
@@ -186,6 +202,10 @@ def plt_pivot_table(
                 ax.set_xticks([], minor=False)
                 ax.set_yticks([], minor=True)
                 ax.set_yticks([], minor=False)
+                ax.spines['top'].set_visible(False)
+                ax.spines['right'].set_visible(False)
+                ax.spines['bottom'].set_visible(False)
+                ax.spines['left'].set_visible(False)
             return axes
 
         try:
