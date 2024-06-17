@@ -47,6 +47,8 @@ def plt_pivot_table(
         suptitle_font_size: float | None = None,
         rc_params: _t.Dict[str, _t.Any] | None = None,
         facecolor: _t.FloatingArray | None = None,
+        h_spacing: float = 1.8,
+        v_spacing: float = 1.8,
     ) -> _t.Generator:
     '''Plot a pivot table of curves. This function is called as a
     context manager, and on exit, it will call matplotlib.pyplot.show().
@@ -74,6 +76,8 @@ def plt_pivot_table(
             An array of RGBA color values that will be used circularly
             to color the headers and indices. If None, use
             `plt.get_cmap('tab20c')([11, 10])` as default.
+        h_spacing, v_spacing
+            Multiplying factors that control the spacings.
 
     Returns:
         fig
@@ -136,10 +140,8 @@ def plt_pivot_table(
 
         # Starting drawing
         # Create a figure that will be sub-divided into different parts
-        # 1.8 is heuristic.
-        # TODO: change 1.8 to dynamic value
-        fig_w = sum(left_right_ratio) / _plt.rcParams['figure.dpi'] * 1.8
-        fig_h = sum(top_down_ratio) / _plt.rcParams['figure.dpi'] * 1.8
+        fig_w = sum(left_right_ratio) / _plt.rcParams['figure.dpi'] * h_spacing
+        fig_h = sum(top_down_ratio) / _plt.rcParams['figure.dpi'] * v_spacing
         fig = _plt.figure(figsize=(fig_w, fig_h)) # size in inches
 
         # Divide the upper part for suptitle
@@ -176,24 +178,18 @@ def plt_pivot_table(
         ]
         for _type, _fig, _texts, _shape, _ratios in index_header_corner:
             _spec = _fig.add_gridspec(*_shape, width_ratios=_ratios, **spec_kw)
-            for i, (_, _, span, text) in enumerate(_texts):
+            for (_, _, span, text, i) in _texts:
                 ax = _fig.add_subplot(_spec[span])
                 if _type == 'corner' and span[0] < df.columns.nlevels:
-                    ax.text(1, 0.5, str(text),
+                    ax.text(0.95, 0.5, str(text),
                             transform=ax.transAxes, ha='right', va='center')
                     ha = 'right'
                 else:
-                    ax.text(0, 0.5, str(text),
+                    ax.text(0., 0.5, str(text),
                             transform=ax.transAxes, ha='left', va='center')
-                ax.axis('off')
+                _borderless(ax)
                 if _type in ('index', 'header'):
-                    # As axis is turned off, need to add a new patch for bkg.
-                    ax.add_patch(_plt.Rectangle(
-                        (0,0), 1, 1,
-                        facecolor=facecolor[int(i % len(facecolor))],
-                        transform=ax.transAxes,
-                        zorder=-1
-                    ))
+                    ax.set_facecolor(facecolor[int(i % len(facecolor))])
 
         def get_subplots_func(**kwargs) -> _t.Iterable[_t.MPLAxes]:
             '''Call this to make matplotlib.axes.Axes objects for
@@ -203,14 +199,7 @@ def plt_pivot_table(
             '''
             axes = fig_body.subplots(*df.shape, gridspec_kw=spec_kw, **kwargs)
             for ax in axes.flatten():
-                ax.set_xticks([], minor=True)
-                ax.set_xticks([], minor=False)
-                ax.set_yticks([], minor=True)
-                ax.set_yticks([], minor=False)
-                ax.spines['top'].set_visible(False)
-                ax.spines['right'].set_visible(False)
-                ax.spines['bottom'].set_visible(False)
-                ax.spines['left'].set_visible(False)
+                _borderless(ax)
             return axes
 
         try:
@@ -220,15 +209,26 @@ def plt_pivot_table(
             _plt.show()
 
 
+def _borderless(ax):
+    ax.set_xticks([], minor=True)
+    ax.set_xticks([], minor=False)
+    ax.set_yticks([], minor=True)
+    ax.set_yticks([], minor=False)
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.spines['bottom'].set_visible(False)
+    ax.spines['left'].set_visible(False)
+
+
 def _compute_cell_span(array, transpose: bool):
     for i, row in enumerate(array):
-        j = 0
-        for val, group in _groupby(row):
-            span = slice(j, j := j + len(list(group)))
+        k = 0
+        for j, (val, group) in enumerate(_groupby(row)):
+            span = slice(k, k := k + len(list(group)))
             if transpose:
-                yield i, _length_in_pixel(val), (span, i), val
+                yield i, _length_in_pixel(val), (span, i), val, j
             else:
-                yield i, _length_in_pixel(val), (i, span), val
+                yield i, _length_in_pixel(val), (i, span), val, j
 
 
 def _length_in_pixel(val):
