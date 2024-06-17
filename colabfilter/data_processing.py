@@ -16,7 +16,6 @@ from . import (
     _ConfiguredPathsToPyTablesConverter,
     _ConfiguredPipeLine,
 )
-# from .utils import TopLevelObjectRegister
 
 
 _PreProcessTask = _t.Callable[[_t.DataFrame], _t.DataFrame]
@@ -446,9 +445,6 @@ def corr_from_interaction(
 
     # Buffer for counting non-NaN correlations
     nonnan_counts = []
-
-    # Enable parallel processing
-    # TopLevelObjectRegister.add_objs(_load_process)
 
     # _ConfiguredPipeLine
     (

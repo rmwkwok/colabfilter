@@ -6,7 +6,6 @@ uses the Welford's method for the variance-calculation[2].
 [1] https://github.com/pandas-dev/pandas/blob/d9cdd2ee5a58015ef6f4d15c7226110c9aab8140/pandas/_libs/algos.pyx#L347
 [2] https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance
 '''
-from numbers import Integral
 from numpy import typing as _npt
 
 
